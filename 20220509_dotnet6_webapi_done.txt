@@ -1,0 +1,40 @@
+#.net6 webapi project
+
+### 發布
+dotnet publish --configuration Release
+
+### swagger 正式環境需要 => Program.cs
+> 是否有判斷環境 if (app.Environment.IsDevelopment()) ??
+
+### HTTP Error 500.35
+> web.config文件中的hostingModel=“inprocess” 改为hostingModel="OutOfProcess"或者直接删掉hostingModel=“inprocess”
+
+> 相同.net6 都要做此處理
+
+> 不是很確定是不是正確方式 ???????????????
+
+###  cors 解決本地端開發跨網域問題
+> 官方文件 : https://docs.microsoft.com/zh-tw/aspnet/core/security/cors?view=aspnetcore-6.0
+> Program.cs 修改 (參考官方文件位置)
+* 方法1:
+1. var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+2. builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins,
+                          policy =>
+                          {
+                              policy.WithOrigins("*")
+                                    .AllowAnyHeader()
+                                    .AllowAnyMethod();
+                          });
+});
+
+3. app.UseCors(MyAllowSpecificOrigins);
+
+* 方法2:
+1. builder.Services.AddCors();
+2. app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
